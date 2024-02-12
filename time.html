@@ -16,9 +16,9 @@
         }
 
         .container {
-            width: 80%;
+            width: 90%;
             max-width: 600px; /* Опционально: ограничиваем максимальную ширину контейнера */
-            height: 40%;
+            height: auto;
             padding: 20px;
             background-color: var(--tg-theme-bg-color);
             border-radius: 8px;
@@ -51,6 +51,7 @@
             border-radius: 4px;
             font-size: 16px;
             text-align: center;
+            appearance: textfield; /* Добавлено для отображения стрелочек на мобильных устройствах */
         }
 
         span {
@@ -91,9 +92,9 @@
     <div class="container">
         <h1>Введите время публикации</h1>
         <div class="input-container">
-            <input type="number" id="hours" placeholder="Часы" min="0" max="23">
+            <input type="number" id="hours" placeholder="Часы">
             <span>:</span>
-            <input type="number" id="minutes" placeholder="Минуты" min="0" max="59">
+            <input type="number" id="minutes" placeholder="Минуты">
         </div>
 
         <div class="error" id="error-message"></div>
@@ -115,12 +116,32 @@
         function updateTime() {
             errorMessage.textContent = "";
 
-            let hours = parseInt(hoursInput.value) || 0; // Преобразуем в число или используем 0, если ввод некорректный
+            let hours = parseInt(hoursInput.value) || 0;
             let minutes = parseInt(minutesInput.value) || 0;
 
-            // Ограничиваем часы и минуты в диапазоне 0-23 и 0-59 соответственно
-            hours = Math.min(Math.max(hours, 0), 23);
-            minutes = Math.min(Math.max(minutes, 0), 59);
+            // Если часы выходят за диапазон, переходят к следующему/предыдущему дню
+            if (hours < 0) {
+                hours = 23;
+            } else if (hours > 23) {
+                hours = 0;
+            }
+
+            // Если минуты выходят за диапазон, переходят к следующему/предыдущему часу
+            if (minutes < 0) {
+                minutes = 59;
+                if (hours === 0) {
+                    hours = 23;
+                } else {
+                    hours--;
+                }
+            } else if (minutes > 59) {
+                minutes = 0;
+                if (hours === 23) {
+                    hours = 0;
+                } else {
+                    hours++;
+                }
+            }
 
             // Обновляем значения в инпутах
             hoursInput.value = hours.toString().padStart(2, '0');
