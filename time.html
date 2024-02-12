@@ -54,6 +54,40 @@
             appearance: textfield; /* Добавлено для отображения стрелочек на мобильных устройствах */
         }
 
+        /* Увеличение размера стрелок в инпутах */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            /*-webkit-appearance: none; */
+            /*appearance: none; */
+            margin: 0; /* Удаление отступов между кнопкой и инпутом */
+            height: 100%; /* Установка высоты кнопки равной высоте инпута */
+            width: 30px; /* Установка ширины кнопки */
+            background-color: transparent; /* Прозрачный фон кнопки */
+            position: absolute; /* Позиционирование кнопки */
+            right: 0; /* Перемещение кнопки вправо */
+            top: 0; /* Перемещение кнопки вверх */
+            cursor: pointer; /* Изменение курсора при наведении на кнопку */
+        }
+
+        /* Стилизация стрелок */
+        input[type="number"]::-webkit-inner-spin-button::before,
+        input[type="number"]::-webkit-outer-spin-button::before {
+            content: '\25B2'; /* Символ стрелки вверх */
+            color: #666; /* Цвет стрелки */
+        }
+
+        input[type="number"]::-webkit-inner-spin-button::after,
+        input[type="number"]::-webkit-outer-spin-button::after {
+            content: '\25BC'; /* Символ стрелки вниз */
+            color: #666; /* Цвет стрелки */
+        }
+
+        /* Скрытие стрелок на фокусе для Firefox */
+        input[type="number"]:hover::-webkit-inner-spin-button,
+        input[type="number"]:hover::-webkit-outer-spin-button {
+            background-color: #fff; /* Изменение цвета фона кнопки при наведении */
+        }
+
         span {
             margin: 0 10px;
             font-size: 20px;
