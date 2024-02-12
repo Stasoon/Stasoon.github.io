@@ -80,31 +80,54 @@
             <span>:</span>
             <input type="number" id="minutes" placeholder="Минуты" min="0" max="59">
         </div>
-        <button onclick="submitTime()">Отправить</button>
+        <button id="submit">Отправить</button>
     </div>
 
-
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        function submitTime() {
-            var hours = document.getElementById("hours").value;
-            var minutes = document.getElementById("minutes").value;
+        let tg = window.Telegram.WebApp;
+        tg.expand();
 
-            // Проверяем, что введенные значения являются числами
-            if (!isNaN(hours) && !isNaN(minutes)) {
-                hours = parseInt(hours);
-                minutes = parseInt(minutes);
-                
-                // Проверяем, что значения находятся в допустимом диапазоне
-                if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
-                    // Отправляем данные на сервер (в данном случае просто выводим их в консоль)
-                    console.log("Время публикации: " + hours + ":" + minutes);
-                } else {
-                    alert("Пожалуйста, введите корректное время.");
-                }
-            } else {
-                alert("Пожалуйста, введите числовые значения для времени.");
-            }
+        let hoursInput = document.getElementById("hours");
+        let minutesInput = document.getElementById("minutes");
+
+        hoursInput.addEventListener("input", updateTime);
+        minutesInput.addEventListener("input", updateTime);
+
+        function updateTime() {
+            let hours = parseInt(hoursInput.value) || 0; // Преобразуем в число или используем 0, если ввод некорректный
+            let minutes = parseInt(minutesInput.value) || 0;
+
+            // Ограничиваем часы и минуты в диапазоне 0-23 и 0-59 соответственно
+            hours = Math.min(Math.max(hours, 0), 23);
+            minutes = Math.min(Math.max(minutes, 0), 59);
+
+            // Обновляем значения в инпутах
+            hoursInput.value = hours.toString().padStart(2, '0');
+            minutesInput.value = minutes.toString().padStart(2, '0');
         }
+        
+        let submitButton = document.getElementById("submit");
+        submitButton.addEventListener("click", () => {
+            // Проверяем, что введенные значения соответствуют шаблону времени
+            if (!hoursInput.value || !minutesInput.value) {
+                alert("Пожалуйста, введите время публикации");
+                return;
+            }
+
+            let hours = parseInt(hoursInput.value) || 0;
+            let minutes = parseInt(minutesInput.value) || 0;
+
+            let data = {
+                hours: hours,
+                minutes: minutes
+            }
+            tg.sendData(JSON.stringify(data));
+            tg.close();
+
+            alert(hours);
+            alert(minutes);
+        });
     </script>
 </body>
 </html>
