@@ -8,24 +8,31 @@
         body {
             font-family: Arial, sans-serif;
             background-color: var(--tg-theme-secondary-bg-color);
-            margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
 
         .container {
-            width: 400px;
+            width: 80%;
+            max-width: 600px; /* Опционально: ограничиваем максимальную ширину контейнера */
+            height: 40%;
             padding: 20px;
             background-color: var(--tg-theme-bg-color);
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative; /* Для позиционирования div.error */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         h1 {
             margin-bottom: 20px;
+            padding-bottom: 20px;
             color: var(--tg-theme-text-color);
             text-align: center;
         }
@@ -37,7 +44,7 @@
         }
 
         input[type="number"] {
-            width: 60px;
+            width: 80px;
             height: 40px;
             padding: 5px 10px;
             border: 1px solid #ccc;
@@ -69,6 +76,14 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .error {
+            padding-top: 25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +95,8 @@
             <span>:</span>
             <input type="number" id="minutes" placeholder="Минуты" min="0" max="59">
         </div>
+
+        <div class="error" id="error-message"></div>
         <button id="submit">Отправить</button>
     </div>
 
@@ -90,11 +107,14 @@
 
         let hoursInput = document.getElementById("hours");
         let minutesInput = document.getElementById("minutes");
+        let errorMessage = document.getElementById("error-message");
 
         hoursInput.addEventListener("input", updateTime);
         minutesInput.addEventListener("input", updateTime);
 
         function updateTime() {
+            errorMessage.textContent = "";
+
             let hours = parseInt(hoursInput.value) || 0; // Преобразуем в число или используем 0, если ввод некорректный
             let minutes = parseInt(minutesInput.value) || 0;
 
@@ -111,7 +131,7 @@
         submitButton.addEventListener("click", () => {
             // Проверяем, что введенные значения соответствуют шаблону времени
             if (!hoursInput.value || !minutesInput.value) {
-                alert("Пожалуйста, введите время публикации");
+                errorMessage.textContent = "Пожалуйста, введите время публикации";
                 return;
             }
 
@@ -125,8 +145,8 @@
             tg.sendData(JSON.stringify(data));
             tg.close();
 
-            alert(hours);
-            alert(minutes);
+            // Очищаем сообщение об ошибке
+            errorMessage.textContent = "";
         });
     </script>
 </body>
