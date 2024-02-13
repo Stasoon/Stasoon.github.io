@@ -44,7 +44,7 @@
         }
 
         input[type="number"] {
-            width: 80px;
+            width: 6em;
             height: 40px;
             padding: 5px 10px;
             border: 1px solid #ccc;
@@ -61,12 +61,13 @@
             /*appearance: none; */
             margin: 0; /* Удаление отступов между кнопкой и инпутом */
             height: 100%; /* Установка высоты кнопки равной высоте инпута */
-            width: 30px; /* Установка ширины кнопки */
-            background-color: transparent; /* Прозрачный фон кнопки */
+            width: 0.04em; /* Установка ширины кнопки */
             position: absolute; /* Позиционирование кнопки */
             right: 0; /* Перемещение кнопки вправо */
             top: 0; /* Перемещение кнопки вверх */
             cursor: pointer; /* Изменение курсора при наведении на кнопку */
+            opacity: 0.5;
+            background-color: var(--tg-theme-button-color);
         }
 
         /* Стилизация стрелок */
@@ -86,6 +87,7 @@
         input[type="number"]:hover::-webkit-inner-spin-button,
         input[type="number"]:hover::-webkit-outer-spin-button {
             background-color: #fff; /* Изменение цвета фона кнопки при наведении */
+            opacity: 0.8;
         }
 
         span {
