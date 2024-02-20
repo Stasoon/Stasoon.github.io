@@ -8,31 +8,24 @@
         body {
             font-family: Arial, sans-serif;
             background-color: var(--tg-theme-secondary-bg-color);
+            margin: 0 auto;
+            padding: 0;
+            height: 100%;
+            width: 100%; /* Увеличьте значение ширины */
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
         }
 
         .container {
-            width: 90%;
-            max-width: 600px; /* Опционально: ограничиваем максимальную ширину контейнера */
-            height: auto;
+            width: 40%;
             padding: 20px;
             background-color: var(--tg-theme-bg-color);
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            position: relative; /* Для позиционирования div.error */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            box-shadow: 0 2px 10px rgba(31, 31, 31, 0.1);
         }
 
         h1 {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
             color: var(--tg-theme-text-color);
             text-align: center;
         }
@@ -44,60 +37,25 @@
         }
 
         input[type="number"] {
-            width: 6em;
+            width: 90%;
             height: 40px;
-            padding: 5px 10px;
             border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 10px;
             text-align: center;
-            appearance: textfield; /* Добавлено для отображения стрелочек на мобильных устройствах */
         }
-
-        /* Увеличение размера стрелок в инпутах */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            /*-webkit-appearance: none; */
-            /*appearance: none; */
-            margin: 0; /* Удаление отступов между кнопкой и инпутом */
-            height: 100%; /* Установка высоты кнопки равной высоте инпута */
-            width: 0.04em; /* Установка ширины кнопки */
-            position: absolute; /* Позиционирование кнопки */
-            right: 0; /* Перемещение кнопки вправо */
-            top: 0; /* Перемещение кнопки вверх */
-            cursor: pointer; /* Изменение курсора при наведении на кнопку */
-            opacity: 0.5;
-            background-color: var(--tg-theme-button-color);
-        }
-
-        /* Стилизация стрелок */
-        input[type="number"]::-webkit-inner-spin-button::before,
-        input[type="number"]::-webkit-outer-spin-button::before {
-            content: '\25B2'; /* Символ стрелки вверх */
-            color: #666; /* Цвет стрелки */
-        }
-
-        input[type="number"]::-webkit-inner-spin-button::after,
-        input[type="number"]::-webkit-outer-spin-button::after {
-            content: '\25BC'; /* Символ стрелки вниз */
-            color: #666; /* Цвет стрелки */
-        }
-
-        /* Скрытие стрелок на фокусе для Firefox */
-        input[type="number"]:hover::-webkit-inner-spin-button,
-        input[type="number"]:hover::-webkit-outer-spin-button {
-            background-color: #fff; /* Изменение цвета фона кнопки при наведении */
-            opacity: 0.8;
+        
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         span {
-            margin: 0 10px;
             font-size: 20px;
             color: #666;
         }
 
-        button {
-            display: block;
+        #submit {
             width: 100%;
             padding: 10px;
             margin-top: 20px;
@@ -110,8 +68,30 @@
             transition: background-color 0.3s ease;
         }
 
-        button:hover {
+        #submit:hover {
             background-color: #0056b3;
+        }
+
+        img {
+            width: 100%;
+            height: 1em;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            text-align: center;
+            width: 70%;
+        }
+
+        td, th {
+            text-align: center;
+            /*border: 1px solid black;*/
+        }
+
+        td > img {
+            padding-top: 4px;
         }
 
         .error {
@@ -128,12 +108,26 @@
     <div class="container">
         <h1>Введите время публикации</h1>
         <div class="input-container">
-            <input type="number" id="hours" placeholder="Часы">
-            <span>:</span>
-            <input type="number" id="minutes" placeholder="Минуты">
+            <table>
+                <tr> 
+                    <td> <img src="arrow_up.svg" class="up-arrow" data-target="hours"/> </td>
+                    <td> </td>
+                    <td> <img src="arrow_up.svg" class="up-arrow" data-target="minutes"/> </td>
+                </tr>
+                <tr>
+                    <td class="custom-arrow"> <input type="number" id="hours" placeholder="Часы" min="0" max="23"> </td>
+                    <td> <span>:</span> </td>
+                    <td> <input type="number" id="minutes" placeholder="Минуты" min="0" max="59"> </td>
+                </tr>
+                <tr>
+                    <td> <img src="arrow_down.svg" class="down-arrow" data-target="hours"/> </td>
+                    <td> </td>
+                    <td> <img src="arrow_down.svg" class="down-arrow" data-target="minutes"/> </td>
+                </tr>
+            </table>
+            
         </div>
 
-        <div class="error" id="error-message"></div>
         <button id="submit">Отправить</button>
     </div>
 
@@ -144,51 +138,89 @@
 
         let hoursInput = document.getElementById("hours");
         let minutesInput = document.getElementById("minutes");
-        let errorMessage = document.getElementById("error-message");
+        let errorMessage = null;
+        let submitButton = document.getElementById("submit");
 
-        hoursInput.addEventListener("input", updateTime);
-        minutesInput.addEventListener("input", updateTime);
+        hoursInput.addEventListener('input', function() {
+            if (!minutesInput.value) { minutesInput.value = "00"; }
+            if (this.value.length >= 2 && this.value.charAt(1) !== "0") {minutesInput.focus()}
+        });
+        minutesInput.addEventListener('input', function() {
+            if (!hoursInput.value) { hoursInput.value = "00"; }
+        });
 
-        function updateTime() {
-            errorMessage.textContent = "";
+        document.querySelectorAll('.up-arrow, .down-arrow').forEach(function(arrow) {
+            arrow.addEventListener('click', function() {
+                removeErrorMessage();
 
-            let hours = parseInt(hoursInput.value) || 0;
-            let minutes = parseInt(minutesInput.value) || 0;
+                var targetId = this.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+                var minValue = parseInt(input.getAttribute('min'));
+                var maxValue = parseInt(input.getAttribute('max'));
 
-            // Если часы выходят за диапазон, переходят к следующему/предыдущему дню
-            if (hours < 0) {
-                hours = 23;
-            } else if (hours > 23) {
-                hours = 0;
+                if (this.classList.contains('up-arrow')) {
+                    if (parseInt(input.value) === maxValue) {
+                        input.value = minValue.toString().padStart(2, '0');
+                    } else {
+                        input.stepUp();
+                    }
+                } else {
+                    if (parseInt(input.value) === minValue) {
+                        input.value = maxValue.toString().padStart(2, '0');
+                    } else {
+                        input.stepDown();
+                    }
+                }
+
+                var value = input.value.padStart(2, '0');
+                input.value = value;
+            });
+        });
+
+        document.querySelectorAll('input[type="number"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+                removeErrorMessage();
+                var minValue = parseInt(input.getAttribute('min'));
+                var maxValue = parseInt(input.getAttribute('max'));
+                var value = parseInt(input.value);
+
+                // Проверка на минимальное и максимальное значение
+                if (isNaN(value) || value < minValue) {
+                    input.value = minValue.toString();
+                } else if (value > maxValue) {
+                    input.value = maxValue.toString();
+                } else {
+                    input.value = value.toString().padStart(2, '0');
+                }
+            });
+        });
+
+        function displayError(errorText) {
+            if (errorMessage != null){
+                errorMessage.textContent = errorText;
+                return;
             }
 
-            // Если минуты выходят за диапазон, переходят к следующему/предыдущему часу
-            if (minutes < 0) {
-                minutes = 59;
-                if (hours === 0) {
-                    hours = 23;
-                } else {
-                    hours--;
-                }
-            } else if (minutes > 59) {
-                minutes = 0;
-                if (hours === 23) {
-                    hours = 0;
-                } else {
-                    hours++;
-                }
-            }
+            errorMessage = document.createElement('div');
+            errorMessage.className = 'error';
+            errorMessage.id = 'error-message';
+            errorMessage.textContent = errorText;
 
-            // Обновляем значения в инпутах
-            hoursInput.value = hours.toString().padStart(2, '0');
-            minutesInput.value = minutes.toString().padStart(2, '0');
+            // Вставляем элемент .error перед кнопкой подтверждения
+            submitButton.parentNode.insertBefore(errorMessage, submitButton);
+        }
+
+        function removeErrorMessage() {
+            if (errorMessage != null) {
+                errorMessage.remove();
+                errorMessage = null;
+            }
         }
         
-        let submitButton = document.getElementById("submit");
         submitButton.addEventListener("click", () => {
             // Проверяем, что введенные значения соответствуют шаблону времени
-            if (!hoursInput.value || !minutesInput.value) {
-                errorMessage.textContent = "Пожалуйста, введите время публикации";
+            if (!hoursInput.value && !minutesInput.value) {
+                displayError("Пожалуйста, введите время публикации");
                 return;
             }
 
@@ -202,8 +234,7 @@
             tg.sendData(JSON.stringify(data));
             tg.close();
 
-            // Очищаем сообщение об ошибке
-            errorMessage.textContent = "";
+            removeErrorMessage();
         });
     </script>
 </body>
