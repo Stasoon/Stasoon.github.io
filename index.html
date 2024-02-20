@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Время публикации</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--tg-theme-secondary-bg-color);
+            margin: 0 auto;
+            padding: 0;
+            height: 100%;
+        }
+
+        .container {
+            width: 400px;
+            padding: 20px;
+            background-color: var(--tg-theme-bg-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(31, 31, 31, 0.1);
+        }
+
+        h1 {
+            color: var(--tg-theme-text-color);
+            text-align: center;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[type="number"] {
+            width: 90%;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        span {
+            font-size: 20px;
+            color: #666;
+        }
+
+        #submit {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #submit:hover {
+            background-color: #0056b3;
+        }
+
+        img {
+            width: 1em;
+            height: 1em;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            text-align: center;
+            width: 60%;
+        }
+
+        td, th {
+            text-align: center;
+            /*border: 1px solid black;*/
+        }
+
+        td > img {
+            padding-top: 4px;
+        }
+
+        .error {
+            padding-top: 25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Введите время публикации</h1>
+        <div class="input-container">
+            <table>
+                <tr> 
+                    <td> <img src="arrow_up.svg" class="up-arrow" data-target="hours"/> </td>
+                    <td> </td>
+                    <td> <img src="arrow_up.svg" class="up-arrow" data-target="minutes"/> </td>
+                </tr>
+                <tr>
+                    <td class="custom-arrow"> <input type="number" id="hours" placeholder="Часы" min="0" max="23"> </td>
+                    <td> <span>:</span> </td>
+                    <td> <input type="number" id="minutes" placeholder="Минуты" min="0" max="59"> </td>
+                </tr>
+                <tr>
+                    <td> <img src="arrow_down.svg" class="down-arrow" data-target="hours"/> </td>
+                    <td> </td>
+                    <td> <img src="arrow_down.svg" class="down-arrow" data-target="minutes"/> </td>
+                </tr>
+            </table>
+            
+        </div>
+
+        <button id="submit">Отправить</button>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let hoursInput = document.getElementById("hours");
+        let minutesInput = document.getElementById("minutes");
+        let errorMessage = null;
+        let submitButton = document.getElementById("submit");
+
+        hoursInput.addEventListener('input', function() {
+            if (!minutesInput.value) { minutesInput.value = "00"; }
+            if (this.value.length >= 2 && this.value.charAt(1) !== "0") {minutesInput.focus()}
+        });
+        minutesInput.addEventListener('input', function() {
+            if (!hoursInput.value) { hoursInput.value = "00"; }
+        });
+
+        document.querySelectorAll('.up-arrow, .down-arrow').forEach(function(arrow) {
+            arrow.addEventListener('click', function() {
+                removeErrorMessage();
+
+                var targetId = this.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+                var minValue = parseInt(input.getAttribute('min'));
+                var maxValue = parseInt(input.getAttribute('max'));
+
+                if (this.classList.contains('up-arrow')) {
+                    if (parseInt(input.value) === maxValue) {
+                        input.value = minValue.toString().padStart(2, '0');
+                    } else {
+                        input.stepUp();
+                    }
+                } else {
+                    if (parseInt(input.value) === minValue) {
+                        input.value = maxValue.toString().padStart(2, '0');
+                    } else {
+                        input.stepDown();
+                    }
+                }
+
+                var value = input.value.padStart(2, '0');
+                input.value = value;
+            });
+        });
+
+        document.querySelectorAll('input[type="number"]').forEach(function(input) {
+            input.addEventListener('input', function() {
+                removeErrorMessage();
+                var minValue = parseInt(input.getAttribute('min'));
+                var maxValue = parseInt(input.getAttribute('max'));
+                var value = parseInt(input.value);
+
+                // Проверка на минимальное и максимальное значение
+                if (isNaN(value) || value < minValue) {
+                    input.value = minValue.toString();
+                } else if (value > maxValue) {
+                    input.value = maxValue.toString();
+                } else {
+                    input.value = value.toString().padStart(2, '0');
+                }
+            });
+        });
+
+        function displayError(errorText) {
+            if (errorMessage != null){
+                errorMessage.textContent = errorText;
+                return;
+            }
+
+            errorMessage = document.createElement('div');
+            errorMessage.className = 'error';
+            errorMessage.id = 'error-message';
+            errorMessage.textContent = errorText;
+
+            // Вставляем элемент .error перед кнопкой подтверждения
+            submitButton.parentNode.insertBefore(errorMessage, submitButton);
+        }
+
+        function removeErrorMessage() {
+            if (errorMessage != null) {
+                errorMessage.remove();
+                errorMessage = null;
+            }
+        }
+        
+        submitButton.addEventListener("click", () => {
+            // Проверяем, что введенные значения соответствуют шаблону времени
+            if (!hoursInput.value || !minutesInput.value) {
+                displayError("Пожалуйста, введите время публикации");
+                return;
+            }
+
+            let hours = parseInt(hoursInput.value) || 0;
+            let minutes = parseInt(minutesInput.value) || 0;
+
+            let data = {
+                hours: hours,
+                minutes: minutes
+            }
+            tg.sendData(JSON.stringify(data));
+            tg.close();
+
+            removeErrorMessage();
+        });
+    </script>
+</body>
+</html>
