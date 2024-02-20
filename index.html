@@ -11,10 +11,14 @@
             margin: 0 auto;
             padding: 0;
             height: 100%;
+            width: 100%; /* Увеличьте значение ширины */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            width: 400px;
+            width: 40%;
             padding: 20px;
             background-color: var(--tg-theme-bg-color);
             border-radius: 8px;
@@ -69,7 +73,7 @@
         }
 
         img {
-            width: 1em;
+            width: 100%;
             height: 1em;
             cursor: pointer;
             text-align: center;
@@ -78,7 +82,7 @@
         table {
             border-collapse: collapse;
             text-align: center;
-            width: 60%;
+            width: 70%;
         }
 
         td, th {
@@ -215,7 +219,7 @@
         
         submitButton.addEventListener("click", () => {
             // Проверяем, что введенные значения соответствуют шаблону времени
-            if (!hoursInput.value || !minutesInput.value) {
+            if (!hoursInput.value && !minutesInput.value) {
                 displayError("Пожалуйста, введите время публикации");
                 return;
             }
