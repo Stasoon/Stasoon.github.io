@@ -37,11 +37,13 @@
         }
 
         input[type="number"] {
+            color: var(--tg-theme-hint-color);
             width: 90%;
             height: 40px;
             border: 1px solid #ccc;
             border-radius: 10px;
             text-align: center;
+            font-weight: bold;
         }
         
         input::-webkit-outer-spin-button,
@@ -72,11 +74,13 @@
             background-color: #0056b3;
         }
 
-        img {
+        .up-arrow, .down-arrow {
             width: 100%;
             height: 1em;
             cursor: pointer;
             text-align: center;
+            color: var(--tg-theme-hint-color);
+            user-select: none;
         }
 
         table {
@@ -88,11 +92,6 @@
 
         td, th {
             text-align: center;
-            /*border: 1px solid black;*/
-        }
-
-        td > img {
-            padding-top: 4px;
         }
 
         .error {
@@ -111,19 +110,19 @@
         <div class="input-container">
             <table>
                 <tr> 
-                    <td> <img src="arrow_up.svg" class="up-arrow" data-target="hours"/> </td>
+                    <td> <div class="up-arrow" data-target="hours">&#9650;</div> </td>
                     <td> </td>
-                    <td> <img src="arrow_up.svg" class="up-arrow" data-target="minutes"/> </td>
+                    <td> <div class="up-arrow" data-target="minutes">&#9650;</div> </td>
                 </tr>
                 <tr>
-                    <td class="custom-arrow"> <input type="number" id="hours" placeholder="Часы" min="0" max="23"> </td>
+                    <td> <input type="number" id="hours" placeholder="Часы" min="0" max="23"> </td>
                     <td> <span>:</span> </td>
                     <td> <input type="number" id="minutes" placeholder="Минуты" min="0" max="59"> </td>
                 </tr>
                 <tr>
-                    <td> <img src="arrow_down.svg" class="down-arrow" data-target="hours"/> </td>
+                    <td> <div class="down-arrow" data-target="hours">&#9660;</div> </td>
                     <td> </td>
-                    <td> <img src="arrow_down.svg" class="down-arrow" data-target="minutes"/> </td>
+                    <td> <div class="down-arrow" data-target="minutes">&#9660;</div> </td>
                 </tr>
             </table>
             
